@@ -29,6 +29,7 @@
 #elif TARGET_OS_MAC
 #import <AudioUnit/AudioUnit.h>
 #endif
+#import "TPCircularBuffer.h"
 
 @class EZAudioDevice;
 @class EZOutput;
@@ -53,6 +54,13 @@ FOUNDATION_EXPORT Float64 const EZOutputDefaultSampleRate;
 ///-----------------------------------------------------------
 /// @name Providing Audio Data
 ///-----------------------------------------------------------
+
+/**
+ Provides output using a circular
+ @param output The instance of the FabricSpeaker that asked for the data
+ @return The EZOutputDataSource's TPCircularBuffer structure holding the audio data in a circular buffer
+ */
+-(TPCircularBuffer*)outputShouldUseCircularBuffer:(EZOutput *)output;
 
 @required
 

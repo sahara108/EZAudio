@@ -705,6 +705,44 @@ OSStatus EZOutputConverterInputCallback(void                       *inRefCon,
                shouldFillAudioBufferList:ioData
                       withNumberOfFrames:inNumberFrames
                                timestamp:inTimeStamp];
+    }else if( [output.dataSource respondsToSelector:@selector(outputShouldUseCircularBuffer:)] ){
+        
+        TPCircularBuffer *circularBuffer = [output.dataSource outputShouldUseCircularBuffer:output];
+        if( !circularBuffer ){
+            //            SInt32 *left  = ioData->mBuffers[0].mData;
+            //            SInt32 *right = ioData->mBuffers[1].mData;
+            //            for(int i = 0; i < inNumberFrames; i++ ){
+            //                left[  i ] = 0.0f;
+            //                right[ i ] = 0.0f;
+            //            }
+            return noErr;
+        };
+        
+        /**
+         Thank you Michael Tyson (A Tasty Pixel) for writing the TPCircularBuffer, you are amazing!
+         */
+        
+        // Get the available bytes in the circular buffer
+        int32_t availableBytes;
+        void *buffer = TPCircularBufferTail(circularBuffer,&availableBytes);
+        int32_t amount = 0;
+//        float floatNumber = availableBytes * 0.25 / 48;
+//        float speakerNumber = ioData->mBuffers[0].mDataByteSize * 0.25 / 48;
+        
+        for (int i=0; i < ioData->mNumberBuffers; i++) {
+            AudioBuffer abuffer = ioData->mBuffers[i];
+            
+            // Ideally we'd have all the bytes to be copied, but compare it against the available bytes (get min)
+            amount = MIN(abuffer.mDataByteSize,availableBytes);
+            
+            // copy buffer to audio buffer which gets played after function return
+            memcpy(abuffer.mData, buffer, amount);
+            
+            // set data size
+            abuffer.mDataByteSize = amount;
+        }
+        // Consume those bytes ( this will internally push the head of the circular buffer )
+        TPCircularBufferConsume(circularBuffer,amount);
     }
     else
     {
