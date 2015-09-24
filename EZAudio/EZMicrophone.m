@@ -41,6 +41,12 @@ typedef struct EZMicrophoneInfo
     AudioStreamBasicDescription   streamFormat;
 } EZMicrophoneInfo;
 
+static const UInt32 kEZAudioMicrophoneEnableFlag  = 1;
+static const UInt32 kEZAudioMicrophoneDisableFlag = 1;
+static const UInt32 kMicrophoneMuteDisableFlag = 0;
+static const AudioUnitScope kEZAudioMicrophoneInputBus  = 1;
+static const AudioUnitScope kEZAudioMicrophoneOutputBus = 0;
+
 //------------------------------------------------------------------------------
 #pragma mark - Callbacks
 //------------------------------------------------------------------------------
@@ -586,6 +592,38 @@ static OSStatus EZAudioMicrophoneCallback(void                       *inRefCon,
 }
 
 //------------------------------------------------------------------------------
+#pragma mark custom
+-(void)setMute:(BOOL)on
+{
+    if (on) {
+        AudioUnitSetProperty(*[self audioUnit],
+                             kAUVoiceIOProperty_MuteOutput,
+                             kAudioUnitScope_Input,
+                             kEZAudioMicrophoneInputBus,
+                             &kEZAudioMicrophoneEnableFlag,
+                             sizeof(kEZAudioMicrophoneEnableFlag));
+    }else {
+        AudioUnitSetProperty(*[self audioUnit],
+                             kAUVoiceIOProperty_MuteOutput,
+                             kAudioUnitScope_Input,
+                             kEZAudioMicrophoneInputBus,
+                             &kMicrophoneMuteDisableFlag,
+                             sizeof(kMicrophoneMuteDisableFlag));
+    }
+}
+
+-(BOOL)isMuting
+{
+    UInt32 muting;
+    UInt32 propSize = sizeof(muting);
+    AudioUnitGetProperty(*[self audioUnit],
+                         kAUVoiceIOProperty_MuteOutput,
+                         kAudioUnitScope_Input,
+                         kEZAudioMicrophoneInputBus,
+                         &muting,
+                         &propSize);
+    return muting > 0;
+}
 
 @end
 
