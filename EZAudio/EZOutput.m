@@ -123,6 +123,10 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
     if (self)
     {
         [self setup];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(speakerRouteChanged:)
+                                                     name:AVAudioSessionRouteChangeNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -195,6 +199,11 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
 //------------------------------------------------------------------------------
 #pragma mark - Setup
 //------------------------------------------------------------------------------
+
+-(void)speakerRouteChanged:(NSNotification*)notif
+{
+    [self setDevice:[EZAudioDevice currentOutputDevice]];
+}
 
 - (void)setup
 {
