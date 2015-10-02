@@ -98,6 +98,7 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.floatConverter)
     {
         self.floatConverter = nil;
