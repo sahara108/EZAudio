@@ -726,6 +726,7 @@ OSStatus EZOutputConverterInputCallback(void                       *inRefCon,
             //                left[  i ] = 0.0f;
             //                right[ i ] = 0.0f;
             //            }
+            *ioActionFlags |= kAudioUnitRenderAction_OutputIsSilence;
             return noErr;
         };
         
@@ -760,12 +761,7 @@ OSStatus EZOutputConverterInputCallback(void                       *inRefCon,
         //
         // Silence if there is nothing to output
         //
-        for (int i = 0; i < ioData->mNumberBuffers; i++)
-        {
-            memset(ioData->mBuffers[i].mData,
-                   0,
-                   ioData->mBuffers[i].mDataByteSize);
-        }
+        *ioActionFlags |= kAudioUnitRenderAction_OutputIsSilence;
     }
     return noErr;
 }
