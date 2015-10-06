@@ -682,7 +682,8 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
 - (OSType)outputAudioUnitSubType
 {
 #if TARGET_OS_IPHONE
-    return kAudioUnitSubType_RemoteIO;
+//    return kAudioUnitSubType_RemoteIO;
+    return kAudioUnitSubType_VoiceProcessingIO;
 #elif TARGET_OS_MAC
     return kAudioUnitSubType_HALOutput;
 #endif
