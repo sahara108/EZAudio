@@ -203,7 +203,7 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
 
 -(void)speakerRouteChanged:(NSNotification*)notif
 {
-    [self setDevice:[EZAudioDevice currentOutputDevice]];
+//    [self setDevice:[EZAudioDevice currentOutputDevice]];
 }
 
 - (void)setup
@@ -682,8 +682,8 @@ OSStatus EZOutputGraphRenderCallback(void                       *inRefCon,
 - (OSType)outputAudioUnitSubType
 {
 #if TARGET_OS_IPHONE
-//    return kAudioUnitSubType_RemoteIO;
-    return kAudioUnitSubType_VoiceProcessingIO;
+    return kAudioUnitSubType_RemoteIO;
+//    return kAudioUnitSubType_VoiceProcessingIO;
 #elif TARGET_OS_MAC
     return kAudioUnitSubType_HALOutput;
 #endif
